@@ -1,0 +1,64 @@
+.header {
+    background-color:#040404; /* Change this to your desired color */
+    height: 100px; /* Set the desired height */
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px #040404; /* Optional shadow */
+    z-index: 1000;
+}
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .header h1 {
+    color: white; /* Logo text color */
+  }
+  
+  .header nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .header nav ul li {
+    margin-left: 20px; /* Space between nav items */
+  }
+  
+  .header nav ul li a {
+    color: white; /* Link text color */
+    text-decoration: none;
+  }
+  
+  .header nav ul li a:hover {
+    text-decoration: underline; /* Optional hover effect */
+  }
+
+  .customer-info {
+    color: #fdf8f8;            /* Dark text color */
+    margin-top: 8px;       /* Space above the customer info */
+}
+
+.customer-name {
+    font-size: 16px;        /* Font size for customer name */
+    margin: 0;             /* Remove default margin */
+}
+
+.customer-role {
+    font-size: 14px;        /* Font size for customer role */
+    margin: 0;             /* Remove default margin */
+}
+
+.header-logo {
+  width: 200px;           /* Set the desired width */
+  height: 200px;          /* Maintain aspect ratio */
+  margin-left: auto;     /* Push logo to the right */
+}
