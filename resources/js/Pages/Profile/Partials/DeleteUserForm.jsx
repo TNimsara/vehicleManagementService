@@ -7,6 +7,7 @@ import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
 
+
 export default function DeleteUserForm({ className = '' }) {
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
     const passwordInput = useRef();
@@ -46,11 +47,9 @@ export default function DeleteUserForm({ className = '' }) {
     };
 
     return (
-        <section className={`space-y-6 ${className}`}>
+        <div className="content-area bg-white p-8 max-w-xl mx-auto rounded-lg shadow-md">
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Delete Account
-                </h2>
+            <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Delete Account</h1>
 
                 <p className="mt-1 text-sm text-gray-600">
                     Once your account is deleted, all of its resources and data
@@ -115,6 +114,7 @@ export default function DeleteUserForm({ className = '' }) {
                     </div>
                 </form>
             </Modal>
-        </section>
+       
+        </div>
     );
 }

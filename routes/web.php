@@ -111,7 +111,20 @@ Route::get('/CustomerDashboard', function () {
 Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles/store');
 Route::put('vehicles/update/{id}', [VehicleController::class, 'update'])->name('vehicles/update');
 
+Route::get('/MyVehicles',function(){
+    return Inertia::render('Customer/MyVehicles');
+})->name('MyVehicles');
 
+//Feedback
+
+Route::get('/AddFeedback',function(){
+    return Inertia::render('Customer/AddFeedback');
+})->name('AddFeedback');
+
+//profile
+Route::get('/ProfileSettings',function(){
+    return Inertia::render('Customer/ProfileSettings');
+})->name('ProfileSettings');
 
 Route::get('/create', function () {
     return Inertia::render('Appointments/Create'); // Ensure the casing matches

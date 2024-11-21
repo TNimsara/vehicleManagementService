@@ -15,7 +15,6 @@ class VehicleController extends Controller
         try {
             $request->validate([
                 'vehicle_id' => 'required|string|max:10|unique:vehicles,vehicle_id',
-                'user_id' => 'required|string|max:7',
                 'year' => 'required|integer',
                 'last_service_date' => 'nullable|date',
                 'category' => 'required|string',
@@ -27,6 +26,7 @@ class VehicleController extends Controller
             return response()->json($e->errors(), 422);
         }
         
+        $user_id = auth()->id();
 
         // Handle the uploaded photo if it exists
         $photoPath = null;

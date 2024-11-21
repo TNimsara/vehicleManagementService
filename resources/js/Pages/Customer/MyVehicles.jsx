@@ -1,7 +1,7 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import BusinessHoursForm from '@/Components/BusinessHoursForm';
+import AddVehicleForm from '@/Components/AddVehicleForm';
 import '@/Pages/Customer/CustomerDashboard.css';
 import PrimaryButton from '@/Components/PrimaryButton';
 
@@ -20,7 +20,7 @@ export default function Dashboard() {
 
                 {/* Business Hours Form */}
                 <div className="flex-1 ml-6">
-                    <BusinessHoursForm />
+                    <AddVehicleForm />
                 </div>
             </div>
         </div>

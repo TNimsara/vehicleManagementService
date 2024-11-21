@@ -34,7 +34,7 @@ export default function Sidebar() {
 
                     {/* Feedback Link */}
                     <li>
-                        <Link href="/feedback" className="flex items-center text-white py-3 px-5 rounded-lg hover:bg-gray-700 transition duration-300">
+                        <Link href="/AddFeedback" className="flex items-center text-white py-3 px-5 rounded-lg hover:bg-gray-700 transition duration-300">
                             <FaCommentDots className="text-base mr-4" />
                             <span className="text-base font-medium">Feedback</span>
                         </Link>
@@ -58,7 +58,7 @@ export default function Sidebar() {
 
                     {/* Profile Link */}
                     <li>
-                        <Link href="/profile" className="flex items-center text-white py-3 px-5 rounded-lg hover:bg-gray-700 transition duration-300">
+                        <Link href="/ProfileSettings" className="flex items-center text-white py-3 px-5 rounded-lg hover:bg-gray-700 transition duration-300">
                             <FaCog className="text-base mr-4" />
                             <span className="text-base font-medium">Profile</span>
                         </Link>

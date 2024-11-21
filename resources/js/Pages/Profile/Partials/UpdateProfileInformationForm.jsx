@@ -4,6 +4,8 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -21,15 +23,23 @@ export default function UpdateProfileInformation({
     const submit = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'));
+        patch(route('profile.update'),{
+            onSuccess: () => {
+                reset();
+                toast.success('Profile Updated Successfully');
+            },
+            onError: (errors) => {
+                // Handle errors if necessary, e.g. display error messages
+                toast.error('Failed to update profile');
+            }
+        });
+
     };
 
     return (
-        <section className={className}>
+        <div className="content-area bg-white p-8 max-w-xl mx-auto rounded-lg shadow-md">
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Profile Information
-                </h2>
+            <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Update Profile</h1>
 
                 <p className="mt-1 text-sm text-gray-600">
                     Update your account's profile information and email address.
@@ -95,7 +105,7 @@ export default function UpdateProfileInformation({
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>
 
-                    <Transition
+                    {/* <Transition
                         show={recentlySuccessful}
                         enter="transition ease-in-out"
                         enterFrom="opacity-0"
@@ -105,9 +115,10 @@ export default function UpdateProfileInformation({
                         <p className="text-sm text-gray-600">
                             Saved.
                         </p>
-                    </Transition>
+                    </Transition> */}
                 </div>
             </form>
-        </section>
+            <ToastContainer />
+        </div>
     );
 }
