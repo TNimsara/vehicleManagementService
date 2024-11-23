@@ -12,4 +12,5 @@ Route::get('/user', function (Request $request) {
 // Route::get('/business-hours/view', [BusinessHourController::class, 'index']);
 // Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles/store');
 
-Route::put('vehicles/update/{id}', [VehicleController::class, 'update'])->name('vehicles/update');
+// Route::put('vehicles/update/{id}', [VehicleController::class, 'update'])->name('vehicles/update');
+Route::get('/vehicle-ids', [VehicleController::class, 'getVehiclesForUser'])->name('vehicle-ids');

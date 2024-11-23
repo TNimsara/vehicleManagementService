@@ -8,7 +8,7 @@ import '@/Pages/Customer/CustomerDashboard.css';
 import PrimaryButton from '@/Components/PrimaryButton';
 
 export default function Dashboard() {
-    const [selectedForm, setSelectedForm] = useState('addVehicle'); // Default to Add Vehicle form
+    const [selectedForm, setSelectedForm] = useState(); // Default to Add Vehicle form
 
     // Function to handle button clicks and set the selected form
     const handleButtonClick = (formType) => {

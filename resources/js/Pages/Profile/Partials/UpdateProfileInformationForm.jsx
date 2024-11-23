@@ -105,7 +105,7 @@ export default function UpdateProfileInformation({
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>
 
-                    {/* <Transition
+                    <Transition
                         show={recentlySuccessful}
                         enter="transition ease-in-out"
                         enterFrom="opacity-0"
@@ -115,7 +115,7 @@ export default function UpdateProfileInformation({
                         <p className="text-sm text-gray-600">
                             Saved.
                         </p>
-                    </Transition> */}
+                    </Transition>
                 </div>
             </form>
             <ToastContainer />

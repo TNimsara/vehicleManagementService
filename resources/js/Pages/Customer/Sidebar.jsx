@@ -18,7 +18,7 @@ export default function Sidebar() {
 
                     {/* My Vehicles Link */}
                     <li>
-                        <Link href="/vehiclereg" className="flex items-center text-white py-3 px-5 rounded-lg hover:bg-gray-700 transition duration-300">
+                        <Link href="/MyVehicles" className="flex items-center text-white py-3 px-5 rounded-lg hover:bg-gray-700 transition duration-300">
                             <FaCar className="text-base mr-4" />
                             <span className="text-base font-medium">My Vehicles</span>
                         </Link>

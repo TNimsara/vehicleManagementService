@@ -109,7 +109,15 @@ Route::get('/CustomerDashboard', function () {
 
 //vehicle
 Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles/store');
-Route::put('vehicles/update/{id}', [VehicleController::class, 'update'])->name('vehicles/update');
+Route::put('/vehicles/update/{id}', [VehicleController::class, 'update'])->name('vehicles/update');
+Route::get('/vehicle-details/{vehicle_id}', [VehicleController::class, 'showVehicleDetails'])->name('vehicle-details');
+Route::get('/vehicle-ids', [VehicleController::class, 'getVehicleIds'])->name('vehicle-ids');
+Route::get('/getVehicles', [VehicleController::class, 'getVehicles'])->name('getVehicles');
+
+// Route::middleware('auth:sanctum')
+//     ->get('vehicle-details/{vehicle_id}',  
+//      [VehicleController::class, 'showVehicleDetails']
+// );
 
 Route::get('/MyVehicles',function(){
     return Inertia::render('Customer/MyVehicles');
