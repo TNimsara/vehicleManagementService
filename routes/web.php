@@ -8,6 +8,8 @@ use App\Http\Controllers\BusinessHourController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Feedback;
 use App\Models\Vehical;
@@ -38,18 +40,28 @@ Route::post('/send-mail', function(Request $request){
     Mail::to($email)->send(new FirstMail());
 });
 
-Route::get('/dashboard', function () {
+// Admin Dashboard Route
+Route::get('/AdminDashboard', function () {
     return Inertia::render('Admin/AdminDashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('AdminDashboard');
+
+// Receptionist Dashboard Route
+Route::middleware(['auth', 'verified'])->get('/ReceptionistDashboard', function () {
+    return Inertia::render('Receptionist/ReceptionistDashboard'); // This corresponds to ReceptionistDashboard.jsx component
+})->name('ReceptionistDashboard'); // Define a route name for Receptionist Dashboard
+
+// Customer Dashboard Route
+Route::middleware(['auth', 'verified'])->get('/CustomerDashboard', function () {
+    return Inertia::render('Customer/CustomerDashboard'); // This corresponds to CustomerDashboard.jsx component
+})->name('CustomerDashboard'); // Define a route name for Customer Dashboard
+
+
+
 
 
 Route::get('/customer',[CustomerController::class,'index'])->name('customer.index');
 Route::post('/customer',[CustomerController::class, 'store'])->name('customer.store');
 
-
-Route::get('/vehical',[VehicalController::class,'index'])->name('vehical.index');
-Route::post('/vehical',[VehicalController::class, 'store'])->name('vehical.store');
-Route::get('/vehical-ids', [VehicalController::class, 'getVehicalIds'])->name('vehical-ids');
 
 
 Route::middleware('auth')->group(function () {
@@ -103,9 +115,9 @@ Route::get('/viewFeedback',function(){
 })->name('viewFeedback');
 
 //Customer
-Route::get('/CustomerDashboard', function () {
-    return Inertia::render('Customer/CustomerDashboard'); // Ensure the casing matches
-})->middleware(['auth', 'verified'])->name('CustomerDashboard');
+// Route::get('/CustomerDashboard', function () {
+//     return Inertia::render('Customer/CustomerDashboard'); // Ensure the casing matches
+// })->middleware(['auth', 'verified'])->name('CustomerDashboard');
 
 //vehicle
 Route::post('/vehicles/store', [VehicleController::class, 'store'])->name('vehicles/store');
@@ -113,6 +125,7 @@ Route::put('/vehicles/update/{id}', [VehicleController::class, 'update'])->name(
 Route::get('/vehicle-details/{vehicle_id}', [VehicleController::class, 'showVehicleDetails'])->name('vehicle-details');
 Route::get('/vehicle-ids', [VehicleController::class, 'getVehicleIds'])->name('vehicle-ids');
 Route::get('/getVehicles', [VehicleController::class, 'getVehicles'])->name('getVehicles');
+Route::delete('/deleteVehicle/{vehicle_id}', [VehicleController::class, 'deleteVehicle'])->name('deleteVehicle');
 
 // Route::middleware('auth:sanctum')
 //     ->get('vehicle-details/{vehicle_id}',  

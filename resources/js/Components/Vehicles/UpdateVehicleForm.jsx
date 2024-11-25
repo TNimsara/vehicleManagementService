@@ -22,6 +22,7 @@ export default function UpdateVehicleForm() {
 
     // Fetch vehicles for the logged-in user
     useEffect(() => {
+    
         axios
             .get(`/vehicle-ids`) // Adjust to your API endpoint for fetching vehicles
             .then((response) => {
@@ -43,11 +44,14 @@ export default function UpdateVehicleForm() {
         const vehicle_id = e.target.value;
         setSelectedVehicleId(vehicle_id);
 
+        console.log("Selected vehicle ID on change:", vehicle_id);
+
         // Fetch the selected vehicle details from the backend
         if (vehicle_id) {
             axios
                 .get(`/vehicle-details/${vehicle_id}`) 
                 .then((response) => {
+                    console.log('Vehicle details response:', response);  // Add this
                     const vehicle = response.data.vehicle;
                     setData({
                         ...data,
@@ -57,6 +61,7 @@ export default function UpdateVehicleForm() {
                         category: vehicle.category,
                         colour: vehicle.colour,
                         brand: vehicle.brand,
+                    
                     });
                 })
                 .catch((error) => {
@@ -79,22 +84,34 @@ export default function UpdateVehicleForm() {
 
     // Submit the form
     const submit = (e) => {
+        console.log("Submit function triggered!");
         e.preventDefault();
         setProcessing(true);
 
         // Replace this with your form submission logic
-        axios
-            .post('/vehicles/update/${vehicle_id}', data)
+        const id = selectedVehicleId;  // Assuming vehicle_id is the value selected from a <select> element
+
+    // Log to check the value of vehicleId
+        console.log("Selected Vehicle ID:", selectedVehicleId);
+
+        axios.put(`/vehicles/update/${id}`, data)
             .then((response) => {
                 setProcessing(false);
-                toast.success('Vehicle updated successfully!');
+                toast.success(response.data.message || 'Vehicle updated successfully!');
             })
             .catch((error) => {
                 setProcessing(false);
+                if (error.response && error.response.status === 403) {
+                toast.error(error.response.data.message || 'Forbidden: You do not have permission to update this vehicle.');
+                } else {
                 toast.error('Failed to update vehicle');
+                }
                 console.error(error);
-            });
-    };
+        });
+
+       
+    }
+
 
     return (
         <div className="content-area bg-white p-8 max-w-xl mx-auto rounded-lg shadow-md">
@@ -102,6 +119,7 @@ export default function UpdateVehicleForm() {
             <div className="scrollable-form-container max-h-[500px] overflow-y-auto p-4">
                 <form onSubmit={submit}>
                     {/* Vehicle ID Dropdown */}
+                    
                     <div className="mb-4">
                         <InputLabel htmlFor="vehicle_id" className="block text-gray-700">
                             Vehicle Registration Number

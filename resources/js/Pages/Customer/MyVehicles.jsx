@@ -57,12 +57,7 @@ export default function Dashboard() {
                     >
                     View
                     </PrimaryButton>
-                    <PrimaryButton 
-                        className="bg-blue-600 text-white p-2 rounded"
-                        onClick={() => handleButtonClick('delete')}
-                    >
-                    Delete
-                    </PrimaryButton>
+
                 </div>
 
                 {/* Dynamic Form Content */}

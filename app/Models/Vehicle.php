@@ -14,6 +14,8 @@ class Vehicle extends Model
 
      // The primary key for the table (optional if it's 'id')
      protected $primaryKey = 'vehicle_id';
+
+     public $incrementing = false;
  
      // The attributes that are mass assignable
      protected $fillable = [

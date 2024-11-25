@@ -81,64 +81,105 @@ class VehicleController extends Controller
         return response()->json($vehicles);
     }
 
+
+    public function deleteVehicle(Request $request, $vehicle_id)
+    {
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ]);
+    
+        $user = $request->user();
+        
+        // Find the vehicle by vehicle_id and user_id
+        $vehicle = Vehicle::where('user_id', $user->id)->where('vehicle_id', $vehicle_id)->first();
+    
+        if ($vehicle) {
+            $vehicle->delete(); // Delete the vehicle
+            return response()->json(['message' => 'Vehicle deleted successfully']);
+        } else {
+            return response()->json(['error' => 'Vehicle not found'], 404);
+        }
+    }
+
     public function update(Request $request, $id)
 {
-    // Log::info('Updating vehicle with ID:', ['vehicle_id' => $id]);
-    // // Find the vehicle by vehicle_id
-    // $vehicle = Vehicle::where('vehicle_id', $id)->first();
-    if (auth()->check()) {
-        $user_id = auth()->id();
-
-        $vehicles = Vehicle::where('user_id', $user_id)
-                            ->get(['vehicle_id', 'brand', 'colour']); // Adjust the fields you need
-
-    try {
-        $request->validate([
-            'vehicle_id' => 'required|string|max:10|unique:vehicles,vehicle_id,' . $vehicle->vehicle_id . ',vehicle_id',
-            'user_id' => 'required|string|max:7',
-            'year' => 'required|integer',
-            'last_service_date' => 'nullable|date',
-            'category' => 'required|string',
-            'colour' => 'required|string',
-            'brand' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json($e->errors(), 422);
-    }
-
-    // Handle the uploaded photo if it exists
-    $photoPath = $vehicle->photo;  // Keep the old photo if no new photo is uploaded
-    if ($request->hasFile('photo')) {
-        if ($vehicle->photo) {
-            // Delete the old photo
-            Storage::disk('public')->delete($vehicle->photo);
+        //Log::info('Incoming request data:', $request->all());
+        Log::info('Update method triggered for vehicle ID: ' . $id);
+        // Ensure the vehicle exists by vehicle_id
+        $vehicle = Vehicle::where('vehicle_id', $id)->first();  // Fetch vehicle by vehicle_id
+        if (!$vehicle) {
+            Log::error('Vehicle not found for vehicle_id: ' . $id);
+            return response()->json(['error' => 'Vehicle not found'], 404);  // Return an error if the vehicle is not found
         }
+    
+        // Check if user is authenticated
+        if (auth()->check()) {
+            $user_id = auth()->id();  // Get the authenticated user's ID
+            Log::info('Authenticated user ID: ' . $user_id);
+            // Ensure the vehicle belongs to the authenticated user
+            Log::info('Authenticated user ID:', ['user_id' => auth()->id()]);
+            Log::info('Vehicle user_id:', ['vehicle_user_id' => $vehicle->user_id]);
+            
 
-        // Store the new photo
-        $photoPath = $request->file('photo')->store('vehicle_photos', 'public');
-    }
+            if ((int)$vehicle->user_id !== (int)$user_id) {
 
-    // Update the vehicle record
-    $vehicle->update([
-        'vehicle_id' => $request->vehicle_id,
-        'user_id' => $request->user_id,
-        'year' => $request->year,
-        'last_service_date' => $request->last_service_date,
-        'category' => $request->category,
-        'colour' => $request->colour,
-        'brand' => $request->brand,
-        'photo' => $photoPath,
-    ]);
+                Log::error('Unauthorized attempt to update vehicle by user ID: ' . $user_id);
+                return response()->json(['error' => 'Unauthorized to update this vehicle'], 403);
+            }
+            Log::info('Request data for vehicle update', $request->all());
+    
+            // Validate the request data
+            $validatedData = $request->validate([
+                'vehicle_id' => 'required|string|max:10|unique:vehicles,vehicle_id,' . $vehicle->vehicle_id . ',vehicle_id',
 
-    return response()->json([
-        'success' => true,
-        'message' => 'Vehicle updated successfully!',
-        'vehicle' => $vehicle,
-        'photo_url' => $photoPath ? Storage::url($photoPath) : null,
-    ], 200);
+                'year' => 'required|integer',
+                'last_service_date' => 'nullable|date',
+                'category' => 'required|string',
+                'colour' => 'required|string',
+                'brand' => 'required|string',
+                'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
+    
+            // Handle the uploaded photo if it exists
+            $photoPath = $vehicle->photo;  // Keep the old photo if no new photo is uploaded
+            if ($request->hasFile('photo')) {
+                // If the vehicle has a photo, delete the old one
+                if ($vehicle->photo) {
+                    Storage::disk('public')->delete($vehicle->photo);
+                }
+    
+                // Store the new photo and get the path
+                $photoPath = $request->file('photo')->store('vehicle_photos', 'public');
+            }
+    
+            // Update the vehicle record
+            $vehicle->update([
+                'vehicle_id' => $request->vehicle_id,
+                'user_id' => $user_id,  // Use the authenticated user's ID
+                'year' => $request->year,
+                'last_service_date' => $request->last_service_date,
+                'category' => $request->category,
+                'colour' => $request->colour,
+                'brand' => $request->brand,
+                'photo' => $photoPath,
+            ]);
+    
+            
+            Log::info('Vehicle updated successfully!');
+            // Return a success response with the updated vehicle
+            return response()->json([
+                'success' => true,
+                'message' => 'Vehicle updated successfully!',
+                'vehicle' => $vehicle,
+                'photo_url' => $photoPath ? Storage::url($photoPath) : null,
+            ], 200);
+        }
+    
+        // If user is not authenticated
+        return response()->json(['error' => 'Unauthorized'], 401);  // Return Unauthorized if the user is not logged in
 }
-}
+    
+    
 
 //getting vehicle_ids from user_id
 public function getVehicleIds(Request $request)
@@ -155,7 +196,7 @@ public function getVehicleIds(Request $request)
     $vehicles = Vehicle::where('user_id', $user_id)->get(['vehicle_id']); 
     // Log::info($vehicles);// Adjust the fields you need
 
-    Log::info('Fetched vehicles for user:', ['vehicles' => $vehicles]);
+    // Log::info('Fetched vehicles for user:', ['vehicles' => $vehicles]);
 
     if ($vehicles->isEmpty()) {
         return response()->json(['error' => 'No vehicles found for this user'], 404);

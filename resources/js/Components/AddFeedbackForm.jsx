@@ -5,8 +5,10 @@ import TextInput from '@/Components/TextInput';
 import PrimaryButton from '@/Components/PrimaryButton';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';  // Import axios
 
 export default function VehicleFeedbackForm() {
+
     const { data, setData, post, processing, errors, reset } = useForm({
         feedback_id: '',
         feedback_type: '',
@@ -20,17 +22,29 @@ export default function VehicleFeedbackForm() {
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayString = yesterday.toISOString().split('T')[0];
 
-    const [vehicles, setVehicles] = useState([]);
+    const [vehicles, setVehicles] = useState([]); // Initialize as empty array
+    const [selectedVehicleId, setSelectedVehicleId] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+   
 
     // Fetch the list of vehicles for the dropdown
     useEffect(() => {
-        // Replace with your actual API endpoint to get vehicles
-        fetch('/api/vehicles')
-            .then(response => response.json())
-            .then(data => setVehicles(data))
-            .catch(error => console.error('Error fetching vehicles:', error));
+        axios
+            .get(`/vehicle-ids`) // Adjust to your API endpoint for fetching vehicles
+            .then((response) => {
+                if (response.data && Array.isArray(response.data.vehicle_ids)) {
+                    setVehicles(response.data.vehicle_ids);
+                } else {
+                    console.error('Invalid response structure', response.data);
+                    toast.error('Failed to load vehicles.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching vehicles:', error);
+                toast.error('Error fetching vehicles');
+            });
     }, []);
+
 
     // Handle form submission
     const submit = (e) => {
@@ -59,6 +73,10 @@ export default function VehicleFeedbackForm() {
         }).finally(() => setIsSubmitting(false));
     };
 
+    const handleVehicleChange = (e) => {
+        const vehicle_id = e.target.value;
+        setSelectedVehicleId(vehicle_id);
+    }
     // Reusable error component to show individual field errors
     const showError = (field) => {
         return errors[field] ? <div className="text-red-600 mt-2">{errors[field]}</div> : null;
@@ -95,21 +113,27 @@ export default function VehicleFeedbackForm() {
 
                 {/* Vehicle ID Dropdown */}
                 <div className="mb-4">
-                    <InputLabel htmlFor="vehicle_id" className="block text-gray-700">Vehicle Registration Number</InputLabel>
-                    <select
-                        id="vehicle_id"
-                        name="vehicle_id"
-                        value={data.vehicle_id}
-                        onChange={(e) => setData('vehicle_id', e.target.value)}
-                        className="mt-1 block w-full p-2 border-gray-300 rounded-md"
-                        required
-                    >
-                        <option value="">Select Vehicle</option>
-                        {vehicles.map((vehicle) => (
-                            <option key={vehicle.id} value={vehicle.id}>{vehicle.registration_number}</option>
-                        ))}
-                    </select>
-                    {showError('vehicle_id')}
+                    <InputLabel htmlFor="vehicle_id" className="block text-gray-700">
+                            Vehicle Registration Number
+                        </InputLabel>
+                        <select
+                            id="vehicle_id"
+                            value={selectedVehicleId}
+                            onChange={handleVehicleChange}
+                            required
+                            className="mt-1 block w-full p-2 border-gray-300 rounded-md"
+                        >
+                            <option value="">Select a Vehicle</option>
+                            {vehicles && vehicles.length > 0 ? (
+                                vehicles.map((vehicle) => (
+                                    <option key={vehicle} value={vehicle}>
+                                        {vehicle} {/* Assuming `vehicle` is the vehicle_id */}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="">No vehicles available</option>
+                            )}
+                        </select>
                 </div>
 
                 {/* Service Date Field */}
