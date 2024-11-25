@@ -60,23 +60,46 @@ export default function VehicleFeedbackForm() {
             description: data.description,
         };
 
-        // Post data to the server
-        post(route('feedback/store'), {
-            data: payload,
-            onSuccess: () => {
-                reset();
-                toast.success('Feedback submitted successfully!');
-            },
-            onError: () => {
-                toast.error('Failed to submit feedback. Please try again.');
+        console.log('Submitting feedback:', payload);
+        // axios.post(route('feedbacks/store'), payload)
+        // .then(response => {
+        //     console.log('Success:', response);
+        //     toast.success('Feedback is submitted successfully!');
+        // })
+        // .catch(error => {
+        //     console.error('Error:', error);
+        //     toast.error('Failed to add data. Please try again.');
+        // });
+
+        axios.post('/feedbacks/store', payload)
+        .then((response) => {
+            console.log('Response:', response);  // Log the full response
+            toast.success(response.data.message || 'Feedback submitted successfully!');
+        })
+        .catch((error) => {
+            console.error('Error:', error);  // Log the full error object
+    
+            if (error.response) {
+                console.error('Error Response:', error.response.data);  // Log the error response from server
+    
+                if (error.response.status === 403) {
+                    toast.error(error.response.data.message || 'Forbidden: You do not have permission to submit feedback.');
+                } else {
+                    toast.error(error.response.data.message || 'Failed to submit feedback');
+                }
+            } else {
+                toast.error('Network error or no response from server');
             }
-        }).finally(() => setIsSubmitting(false));
+        });
+
+    
+           
     };
 
-    const handleVehicleChange = (e) => {
-        const vehicle_id = e.target.value;
-        setSelectedVehicleId(vehicle_id);
-    }
+    // const handleVehicleChange = (e) => {
+    //     const vehicle_id = e.target.value;
+    //     setSelectedVehicleId(vehicle_id);
+    // }
     // Reusable error component to show individual field errors
     const showError = (field) => {
         return errors[field] ? <div className="text-red-600 mt-2">{errors[field]}</div> : null;
@@ -118,9 +141,9 @@ export default function VehicleFeedbackForm() {
                         </InputLabel>
                         <select
                             id="vehicle_id"
-                            value={selectedVehicleId}
-                            onChange={handleVehicleChange}
-                            required
+                            value={data.vehicle_id}
+                            onChange={(e) => setData('vehicle_id', e.target.value)}
+                            
                             className="mt-1 block w-full p-2 border-gray-300 rounded-md"
                         >
                             <option value="">Select a Vehicle</option>
@@ -147,7 +170,7 @@ export default function VehicleFeedbackForm() {
                         onChange={(e) => setData('service_date', e.target.value)}
                         max={yesterdayString}
                         className="mt-1 block w-full p-2 border-gray-300 rounded-md"
-                        required
+                        
                     />
                     {showError('service_date')}
                 </div>

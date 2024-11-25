@@ -142,14 +142,13 @@ Route::get('/AddFeedback',function(){
     return Inertia::render('Customer/AddFeedback');
 })->name('AddFeedback');
 
+Route::post('/feedbacks/store', [FeedbackController::class, 'store'])->name('feedbacks/store');
+
 //profile
 Route::get('/ProfileSettings',function(){
     return Inertia::render('Customer/ProfileSettings');
 })->name('ProfileSettings');
 
-Route::get('/create', function () {
-    return Inertia::render('Appointments/Create'); // Ensure the casing matches
-})->name('create');
 
 Route::get('/viewappointments', function () {
     return Inertia::render('Appointments/viewappointments'); // Ensure the casing matches
@@ -188,6 +187,10 @@ Route::get('/booked-times/{date}', [AppointmentController::class, 'getBookedTime
 Route::get('/business-hours/{dayOfWeek}', [BusinessHourController::class, 'show']);
 Route::get('/closed-days', [BusinessHourController::class, 'getClosedDays'])->name('closed-days');
 Route::get('/appointmenthandle', [AppointmentController::class, 'index'])->name('appointmenthandle');
+
+Route::get('/Appointments', function () {
+    return Inertia::render('Customer/Appointments'); // Ensure the casing matches
+})->name('Appointments');
 
 
 

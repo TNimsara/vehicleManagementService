@@ -192,7 +192,6 @@ public function getVehicleIds(Request $request)
     $user_id = auth()->id();
         // Fetch all vehicles associated with the logged-in user
     
-    
     $vehicles = Vehicle::where('user_id', $user_id)->get(['vehicle_id']); 
     // Log::info($vehicles);// Adjust the fields you need
 
