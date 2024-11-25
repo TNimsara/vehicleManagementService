@@ -232,3 +232,5 @@ Route::post('/send-mail',function(Request $request){
 });
 
 
+//view feedbacks
+Route::get('/viewAllFeedback', [FeedbackController::class, 'viewAllFeedback'])->name('viewAllFeedback');

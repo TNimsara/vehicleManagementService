@@ -52,4 +52,19 @@ class FeedbackController extends Controller
         'feedback' => $feedback,
     ], 201);  // HTTP status code 201 for successful creation
     }
+
+    //create view feedbacks
+    public function viewAllFeedback(Request $request){
+
+        $type = $request->input('type');
+
+        if($type!=null){
+            $feedbacks = Feedback::where('feedback_type', $type)->get();
+        }else{
+            $feedbacks = Feedback::all();
+        }
+        //return response()->json(['Feedbacks' => $feedbacks]);
+        return response()->json($feedbacks);
+
+    }
 }

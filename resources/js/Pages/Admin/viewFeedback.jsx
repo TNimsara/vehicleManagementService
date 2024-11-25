@@ -20,12 +20,14 @@ import {
     useEffect(() => {
       const fetchFeedbacks = async () => {
           try {
-            const response = await fetch(`/feedback`);
+            const response = await fetch(`/viewAllFeedback`);
               if (!response.ok) {
                   throw new Error('Network response was not ok');
+
               }
               const data = await response.json();
               setFeedbacks(data);
+              console.log(data);
           } catch (error) {
               console.error('Failed to fetch feedbacks:', error);
           }
@@ -55,13 +57,13 @@ import {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {feedbacks.map((feedbacks) => (
-                                    <TableRow key={feedbacks.id}>
-                                        <TableCell>{feedbacks.id}</TableCell>
-                                        <TableCell>1</TableCell>
-                                        <TableCell>{feedbacks.servicetype}</TableCell>
-                                        <TableCell>{feedbacks.servicedate}</TableCell>
-                                        <TableCell>{feedbacks.discription}</TableCell>
+                                {feedbacks.map((feedback) => (
+                                    <TableRow key={feedback.id}>
+                                        <TableCell>{feedback.feedback_id}</TableCell>
+                                        <TableCell>{feedback.user_id}</TableCell>
+                                        <TableCell>{feedback.servicetype}</TableCell>
+                                        <TableCell>{feedback.service_date}</TableCell>
+                                        <TableCell>{feedback.description}</TableCell>
                                         {/* <TableCell>{feedbacks.userId}</TableCell> */}
                                        
                                     </TableRow>
