@@ -1,10 +1,10 @@
 import React, { useState } from 'react';  // Import useState from React
 import Sidebar from './Sidebar';
 import Header from './Header';
-import AddVehicleForm from '@/Components/Vehicles/AddVehicleForm';
-import UpdateVehicleForm from '@/Components/Vehicles/UpdateVehicleForm';
-import DeleteVehicleForm from '@/Components/Vehicles/DeleteVehicleForm';
-import ViewVehicleForm from '@/Components/Vehicles/ViewVehicleForm';
+import AddAppointmentForm from '@/Components/Appointments/AddAppointmentForm';
+import ViewAppointmentForm from '@/Components/Appointments/ViewAppointmentForm';
+// import DeleteVehicleForm from '@/Components/Appointments/DeleteVehicleForm';
+// import ViewVehicleForm from '@/Components/Appointments/ViewVehicleForm';
 import '@/Pages/Customer/CustomerDashboard.css';
 import PrimaryButton from '@/Components/PrimaryButton';
 
