@@ -2,15 +2,10 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
-
-
-// Import Toastify components
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -26,41 +21,31 @@ export default function CreateAppointment() {
 
     const [minDate, setMinDate] = useState('');
     const [maxDate, setMaxDate] = useState('');
-    const [availableTimes, setAvailableTimes] = useState([]); // **New state for available time slots**
-    // const [bookedTimes, setBookedTimes] = useState([]); // **New state for booked times**
-    const [closedDays, setClosedDays] = useState([]); // New state for closed days
+    const [availableTimes, setAvailableTimes] = useState([]);
+    const [closedDays, setClosedDays] = useState([]);
     const [vehicles, setVehicles] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
-
-    
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1); // Set to tomorrow
-        const formattedTomorrow = tomorrow.toISOString().split('T')[0]; // Format to 'YYYY-MM-DD'
+        tomorrow.setDate(tomorrow.getDate() + 1); 
+        const formattedTomorrow = tomorrow.toISOString().split('T')[0]; 
         
         const nextWeekFromTomorrow = new Date(tomorrow);
-        nextWeekFromTomorrow.setDate(nextWeekFromTomorrow.getDate() + 7); // Set to 1 week from tomorrow
-        const formattedMaxDate = nextWeekFromTomorrow.toISOString().split('T')[0]; // Format to 'YYYY-MM-DD'
+        nextWeekFromTomorrow.setDate(nextWeekFromTomorrow.getDate() + 7); 
+        const formattedMaxDate = nextWeekFromTomorrow.toISOString().split('T')[0]; 
         
         setMinDate(formattedTomorrow);
         setMaxDate(formattedMaxDate);
-        
-        
     }, []);
 
-    // Function to fetch closed days from the backend
     useEffect(() => {
         const fetchClosedDays = async () => {
             try {
-                
-                const response = await axios.get(`/closed-days`); 
-                console.log('Full response:', response.data); 
-                // setClosedDays(response.data.closed_days);
-                // Check if response data is an array
+                const response = await axios.get(`/closed-days`);
                 if (Array.isArray(response.data)) {
-                    console.log('Closed days:', response.data); // Log the closed days
-                    setClosedDays(response.data); // Set closedDays directly from the array
+                    setClosedDays(response.data); 
                 } else {
                     console.warn('Expected an array, but got something else');
                 }
@@ -68,69 +53,18 @@ export default function CreateAppointment() {
                 console.error('Error fetching closed days:', error);
             }
         };
-
         fetchClosedDays();
     }, []);
 
     const isClosedDay = (date) => {
         const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const dayOfWeek = dayNames[date.getUTCDay()];
-
-        // console.log('Checking date:', date); // Log the date being checked
-        // console.log('Day of the week:', dayOfWeek); // Log the corresponding day of the week
-        // console.log('Closed days:', closedDays); // Log the current list of closed days
-
-        const isClosed = closedDays.includes(dayOfWeek);
-        console.log(`Is ${dayOfWeek} a closed day? ${isClosed}`); // Log the result
-
-        return isClosed;
-        // return closedDays.includes(dayOfWeek);
+        return closedDays.includes(dayOfWeek);
     };
-
-
-    // const fetchBusinessHours = async (dayOfWeek) => {
-    //     try {
-    //         const response = await axios.get(`/business-hours/${dayOfWeek}`);
-            
-    //         return response.data; // Log the entire response to check its structuresubmit 
-             
-             
-    //     } catch (error) {
-    //         // console.error('Error fetching business hours:', error);
-    //         // return null; // Return null in case of an error
-    //         // Handle error appropriately
-    //     if (error.response) {
-    //         // The request was made and the server responded with a status code
-    //         console.error('Error fetching business hours:', error.response.status, error.response.data);
-    //     } else if (error.request) {
-    //         // The request was made but no response was received
-    //         console.error('No response received:', error.request);
-    //     } else {
-    //         // Something happened in setting up the request
-    //         console.error('Error:', error.message);
-    //     }
-    //     return null; // Return null or handle the error accordingly
-    //     }
-    // };
-    
-   
-    
-    // const fetchBookedTimes = async (selectedDate) => {
-    //     try {
-    //         const response = await axios.get(`/booked-times/${selectedDate}`);
-
-    //         return response.data.appointmentTimes || []; // Return the booked times
-    //         // setBookedTimes(response.data.appointmentTimes || []);
-    //         // console.log(response.data.appointmentTimes);
-    //     } catch (error) {
-    //         console.error('Error fetching booked times:', error);
-    //         return [];
-    //     }
-    // };
 
     useEffect(() => {
         axios
-            .get(`/vehicle-ids`) // Adjust to your API endpoint for fetching vehicles
+            .get(`/vehicle-ids`) 
             .then((response) => {
                 if (response.data && Array.isArray(response.data.vehicle_ids)) {
                     setVehicles(response.data.vehicle_ids);
@@ -144,131 +78,40 @@ export default function CreateAppointment() {
                 toast.error('Error fetching vehicles');
             });
     }, []);
-    
-    
-    
-    // **Generate available time slots based on business hours and step**
-    // const generateAvailableTimes = (openingTime, closingTime, step,bookedTimes) => {
-    //     const times = [];
-    //     const [openHour, openMinute] = openingTime.split(':');
-    //     const [closeHour, closeMinute] = closingTime.split(':');
 
-    //     let currentTime = new Date();
-    //     currentTime.setHours(openHour, openMinute);
-
-    //     const endTime = new Date();
-    //     endTime.setHours(closeHour, closeMinute);
-
-    //     // Create time slots based on step interval
-    //     while (currentTime < endTime) {
-    //         const timeString = currentTime.toTimeString().slice(0, 5); // Format as HH:mm
-
-    
-    //         // Modify bookedTimes to include only HH:MM
-    //         const bookedTimesShortened = bookedTimes.map(time => time.slice(0, 5));
-    //         const isBooked = bookedTimesShortened.includes(timeString);
-
-
-            
-    //         if (!isBooked) { // **Exclude booked times**
-                
-    //             times.push(timeString);
-    //         }
-    //         currentTime.setMinutes(currentTime.getMinutes() + step);
-    //     }
-    //     console.log("final times")
-    //     console.log(times);
-    //     setAvailableTimes(times); // Update available times in the state
-        
-    // };
     const fetchAvailableTimes = async (date) => {
-        try{
-            const response = await axios.get(`/getAvailableTimes/${date}`); 
-            console.log('Available times from backend:', response.data);
+        try {
+            const response = await axios.get(`/getAvailableTimes/${date}`);
             const timesArray = Object.values(response.data);
             return timesArray;
-        }catch(error){
+        } catch (error) {
             console.error('Error fetching available times:', error);
             return [];
-
         }
     };
 
     const handleDateChange = async (e) => {
         const newDate = e.target.value;
         setSelectedDate(newDate);
-        setData('appointmentDate',newDate);
+        setData('appointmentDate', newDate);
 
-
-        const dayOfWeek = new Date(newDate).toLocaleDateString('en-US', { weekday: 'long' }); 
-
-            // Check if the selected date is closed
         if (isClosedDay(new Date(newDate))) {
-            toast.error('Selected date is closed for appointments.'); // Notify user
-            setAvailableTimes([]); // Reset available times
-            return; // Exit early
+            toast.error('Selected date is closed for appointments.'); 
+            setAvailableTimes([]); 
+            return;
         }
-        
+
         try {
-            const availableTimes = await fetchAvailableTimes(newDate); // Fetch available times from the backend
-            console.log("Available times:", availableTimes);
-            setAvailableTimes(availableTimes); // Update available times state
+            const availableTimes = await fetchAvailableTimes(newDate);
+            setAvailableTimes(availableTimes);
         } catch (error) {
             console.error('Error fetching available times:', error);
-            setAvailableTimes([]); // Reset times on error
+            setAvailableTimes([]);
         }
-
-        
-    
-        // Update minTime based on selected date
-        // updateMinTime(newDate);
-
-        // **Fetch business hours and booked times for the selected date**
-        // const businessHours = await fetchBusinessHours(dayOfWeek);
-        // console.log("145");
-        // console.log(businessHours);
-        // const bookedTimes = await fetchBookedTimes(newDate); // **Fetch booked times**
-      
-        // if (businessHours) {
-        //     generateAvailableTimes(businessHours.openingTime, businessHours.closingTime, businessHours.step,bookedTimes); // **Generate times based on business hours**
-          
-        // } else {
-        //     setAvailableTimes([]); // Reset available times if the business is closed
-        // }
-
-      
-
-        
-
     };
 
-    // **No major changes here**
-    // const updateMinTime = (selectedDate) => {
-    //     const now = new Date();
-    //     const selected = new Date(selectedDate);
-
-    //     if (selected.toDateString() === now.toDateString()) {
-    //         const hours = String(now.getHours()).padStart(2, '0');
-    //         const minutes = String(now.getMinutes()).padStart(2, '0');
-    //         setMinTime(`${hours}:${minutes}`);
-    //     } else {
-    //         setMinTime('00:00');
-    //     }
-    // };
-
-    const submit = async (e) => {
-        e.preventDefault();
-
-        console.log("Submitting the following data:", {
-            vehicle_id: data.vehicle_id,
-            description: data.description,
-            serviceType: data.serviceType,
-            appointmentDate: data.appointmentDate,
-            appointmentTime: data.appointmentTime,
-        });
-    
+    const submitAppointment = async () => {
         try {
-           
             const requestData = {
                 vehicle_id: data.vehicle_id,
                 description: data.description,
@@ -276,157 +119,157 @@ export default function CreateAppointment() {
                 appointment_date: data.appointmentDate,
                 appointment_time: data.appointmentTime,
             };
-        
-            console.log('Request data:', requestData); // Log the data being sent
-        
-            const response = await axios.post(`/makeappointments`, requestData);
-            console.log('Inertia Response:', response);
 
+            const response = await axios.post(`/makeappointments`, requestData);
             if (response.data.status === 'success') {
-                toast.success(response.data.message); // Show success toast
-                reset('vehicle_id','description', 'serviceType', 'appointmentDate', 'appointmentTime');
-                setAvailableTimes([]); // Optionally reset available times
+                toast.success(response.data.message);
+                reset('vehicle_id', 'description', 'serviceType', 'appointmentDate', 'appointmentTime');
+                setAvailableTimes([]);
             } else {
-                toast.error('Failed to create appointment. Please try again.'); // Handle unexpected response
+                toast.error('Failed to create appointment. Please try again.');
             }
         } catch (error) {
-            toast.error('Failed to create appointment. Please try again.'); // Show error toast
-            console.error('Error details:', error); // Log the error details
+            toast.error('Failed to create appointment. Please try again.');
+            console.error('Error details:', error);
         }
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setShowModal(true); // Trigger the modal for confirmation
+    };
+
+    const handleModalSubmit = () => {
+        setShowModal(false); // Close the modal after confirmation
+        submitAppointment(); // Proceed with submitting the appointment
+    };
 
     return (
         <div className="content-area bg-white p-8 max-w-xl mx-auto rounded-lg shadow-md">
-         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Create an appointment</h1>
-         <div className="scrollable-form-container max-h-[500px] overflow-y-auto p-4">
-           <ToastContainer position="top-right" autoClose={5000} />
-    
-           <form onSubmit={submit}>
-
-                {/* Vehicle ID Dropdown */}
-                <div className="mb-4">
-                    <InputLabel htmlFor="vehicle_id" className="block text-gray-700">
+            <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Create an appointment</h1>
+            <div className="scrollable-form-container max-h-[500px] overflow-y-auto p-4">
+                <ToastContainer position="top-right" autoClose={5000} />
+              
+                <form onSubmit={handleSubmit}>
+                    {/* Vehicle ID Dropdown */}
+                    <div className="mb-4">
+                        <InputLabel htmlFor="vehicle_id" className="block text-gray-700">
                             Vehicle Registration Number
                         </InputLabel>
                         <select
                             id="vehicle_id"
                             value={data.vehicle_id}
                             onChange={(e) => setData('vehicle_id', e.target.value)}
-                            
                             className="mt-1 block w-full p-2 border-gray-300 rounded-md"
                         >
                             <option value="">Select a Vehicle</option>
                             {vehicles && vehicles.length > 0 ? (
                                 vehicles.map((vehicle) => (
                                     <option key={vehicle} value={vehicle}>
-                                        {vehicle} {/* Assuming `vehicle` is the vehicle_id */}
+                                        {vehicle}
                                     </option>
                                 ))
                             ) : (
                                 <option value="">No vehicles available</option>
                             )}
                         </select>
-                </div>
+                    </div>
 
-                  
-                <div className="mt-4">
-                    <InputLabel htmlFor="description" value="Description" />
-                    <TextInput
-                        id="description"
-                        name="description"
-                        value={data.description}
-                        className="mt-1 block w-full"
-                        autoComplete="description"
-                        onChange={(e) => setData('description', e.target.value)}
-                       
-                    />
-                    <InputError message={errors.description} className="mt-2" />
-                </div>
+                    <div className="mt-4">
+                        <InputLabel htmlFor="description" value="Description" />
+                        <TextInput
+                            id="description"
+                            name="description"
+                            value={data.description}
+                            className="mt-1 block w-full"
+                            autoComplete="description"
+                            onChange={(e) => setData('description', e.target.value)}
+                        />
+                        <InputError message={errors.description} className="mt-2" />
+                    </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="serviceType" value="Service Type" />
-                    <select
-                        id="serviceType"
-                        name="serviceType"
-                        value={data.serviceType}
-                        className="mt-1 block w-full"
-                        onChange={(e) => setData('serviceType', e.target.value)}
-                        required
-                    >
-                        <option value="">Select a service type</option>
-                        <option value="Full Service">Full Service</option>
-                        <option value="Normal Service">Normal Service</option>
-                    </select>
-                    <InputError message={errors.serviceType} className="mt-2" />
-                </div>
+                    <div className="mt-4">
+                        <InputLabel htmlFor="serviceType" value="Service Type" />
+                        <select
+                            id="serviceType"
+                            name="serviceType"
+                            value={data.serviceType}
+                            className="mt-1 block w-full"
+                            onChange={(e) => setData('serviceType', e.target.value)}
+                            required
+                        >
+                            <option value="">Select a service type</option>
+                            <option value="Full Service">Full Service</option>
+                            <option value="Normal Service">Normal Service</option>
+                        </select>
+                        <InputError message={errors.serviceType} className="mt-2" />
+                    </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="appointmentDate" value="Appointment Date" />
-                    <div className="relative">
+                    <div className="mt-4">
+                        <InputLabel htmlFor="appointmentDate" value="Appointment Date" />
                         <TextInput
                             id="appointmentDate"
                             type="date"
                             name="appointmentDate"
                             value={data.appointmentDate}
-                            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-                            onChange={(e) => handleDateChange(e)}
+                            onChange={handleDateChange}
                             min={minDate}
                             max={maxDate}
+                            className="mt-1 block w-full"
                             required
-                            placeholder="Select a date" // Use the standard placeholder attribute
                         />
-                       <DatePicker
-                            selected={data.appointmentDate ? new Date(data.appointmentDate) : null}
-                            onChange={(date) => {
-                                console.log('Selected date:', date);
-                                handleDateChange({ target: { value: date ? date.toISOString().split('T')[0] : '' } });
-                            }}
-                            filterDate={(date) => {
-                                const isClosed = isClosedDay(date);
-                                console.log('Checking date:', date, 'Is closed day:', isClosed);
-                                return !isClosed; // Filter out closed days
-                            }}
-                            className="absolute inset-0 h-full w-full opacity-0 cursor-pointer" 
-                        />
-
-
+                        <InputError message={errors.appointmentDate} className="mt-2" />
                     </div>
-                    <InputError message={errors.appointmentDate} className="mt-2" />
-                </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="appointmentTime" value="Appointment Time" />
-                    <select
-                        id="appointmentTime"
-                        name="appointmentTime"
-                        value={data.appointmentTime}
-                        className="mt-1 block w-full"
-                        onChange={(e) => setData('appointmentTime', e.target.value)}
-                        required
-                    >
-                        <option value="">Select a time</option>
-                        {availableTimes.length > 0 ? (
-                            availableTimes.map((time, index) => (
-                                <option key={index} value={time}>
-                                    {time}
-                                </option>
-                            ))
-                        ) : (
-                            <option value="" disabled>No available times</option>
-                        )}
-                    </select>
-                    <InputError message={errors.appointmentTime} className="mt-2" />
-                </div>
+                    <div className="mt-4">
+                        <InputLabel htmlFor="appointmentTime" value="Appointment Time" />
+                        <select
+                            id="appointmentTime"
+                            name="appointmentTime"
+                            value={data.appointmentTime}
+                            onChange={(e) => setData('appointmentTime', e.target.value)}
+                            className="mt-1 block w-full"
+                            required
+                        >
+                            <option value="">Select a time</option>
+                            {availableTimes.length > 0 ? (
+                                availableTimes.map((time, index) => (
+                                    <option key={index} value={time}>
+                                        {time}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="">No available times</option>
+                            )}
+                        </select>
+                        <InputError message={errors.appointmentTime} className="mt-2" />
+                    </div>
 
-                <div className="mt-4">
-                    <PrimaryButton disabled={processing}>
-                        {processing ? 'Creating...' : 'Create Appointment'}
-                    </PrimaryButton>
-                </div>
-                
-            </form>
-     </div>
-     </div>
+                    <div className='mt-6 flex justify-center'>
+                        <PrimaryButton type="submit" disabled={processing}>
+                            Create Appointment
+                        </PrimaryButton>
+                    </div>
+                </form>
+
+                {/* Modal for confirmation */}
+                {showModal && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <h2 className="text-lg font-medium text-gray-900">Please confirm your Appointment</h2>
+                            <p>Once your appointment is confirmed, the data will be permanently saved.</p>
+                            <div className="mt-6 flex justify-end">
+                                <PrimaryButton type="button" onClick={() => setShowModal(false)}>
+                                    Cancel
+                                </PrimaryButton>
+                                <PrimaryButton type="button" onClick={handleModalSubmit}>
+                                    Confirm Appointment
+                                </PrimaryButton>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }
