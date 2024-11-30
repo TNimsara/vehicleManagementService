@@ -27,21 +27,25 @@ export default function CreateAppointment() {
     const [minDate, setMinDate] = useState('');
     const [maxDate, setMaxDate] = useState('');
     const [availableTimes, setAvailableTimes] = useState([]); // **New state for available time slots**
-    const [bookedTimes, setBookedTimes] = useState([]); // **New state for booked times**
+    // const [bookedTimes, setBookedTimes] = useState([]); // **New state for booked times**
     const [closedDays, setClosedDays] = useState([]); // New state for closed days
-    // const [vehicalIds, setVehicalIds] = useState([]); // **New state for vehical IDs**
+    const [vehicles, setVehicles] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(null);
+
     
 
     useEffect(() => {
-        const today = new Date().toISOString().split('T')[0];
-        const nextWeek = new Date();setMinTime
-        nextWeek.setDate(nextWeek.getDate() + 7); 
-        const formattedMaxDate = nextWeek.toISOString().split('T')[0];
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1); // Set to tomorrow
+        const formattedTomorrow = tomorrow.toISOString().split('T')[0]; // Format to 'YYYY-MM-DD'
         
-        setMinDate(today);
+        const nextWeekFromTomorrow = new Date(tomorrow);
+        nextWeekFromTomorrow.setDate(nextWeekFromTomorrow.getDate() + 7); // Set to 1 week from tomorrow
+        const formattedMaxDate = nextWeekFromTomorrow.toISOString().split('T')[0]; // Format to 'YYYY-MM-DD'
+        
+        setMinDate(formattedTomorrow);
         setMaxDate(formattedMaxDate);
-
-        // Fetch closed days on component mount
+        
         
     }, []);
 
@@ -84,52 +88,45 @@ export default function CreateAppointment() {
     };
 
 
-    const fetchBusinessHours = async (dayOfWeek) => {
-        try {
-            const response = await axios.get(`/business-hours/${dayOfWeek}`);
+    // const fetchBusinessHours = async (dayOfWeek) => {
+    //     try {
+    //         const response = await axios.get(`/business-hours/${dayOfWeek}`);
             
-            return response.data; // Log the entire response to check its structuresubmit 
-            
-       
-            
-            // Assuming the response includes business hours in the data
-            
-
-            // return console.log(response.data.businessHours); // Return the business hours from the response
+    //         return response.data; // Log the entire response to check its structuresubmit 
              
              
-        } catch (error) {
-            // console.error('Error fetching business hours:', error);
-            // return null; // Return null in case of an error
-            // Handle error appropriately
-        if (error.response) {
-            // The request was made and the server responded with a status code
-            console.error('Error fetching business hours:', error.response.status, error.response.data);
-        } else if (error.request) {
-            // The request was made but no response was received
-            console.error('No response received:', error.request);
-        } else {
-            // Something happened in setting up the request
-            console.error('Error:', error.message);
-        }
-        return null; // Return null or handle the error accordingly
-        }
-    };
+    //     } catch (error) {
+    //         // console.error('Error fetching business hours:', error);
+    //         // return null; // Return null in case of an error
+    //         // Handle error appropriately
+    //     if (error.response) {
+    //         // The request was made and the server responded with a status code
+    //         console.error('Error fetching business hours:', error.response.status, error.response.data);
+    //     } else if (error.request) {
+    //         // The request was made but no response was received
+    //         console.error('No response received:', error.request);
+    //     } else {
+    //         // Something happened in setting up the request
+    //         console.error('Error:', error.message);
+    //     }
+    //     return null; // Return null or handle the error accordingly
+    //     }
+    // };
     
    
     
-    const fetchBookedTimes = async (selectedDate) => {
-        try {
-            const response = await axios.get(`/booked-times/${selectedDate}`);
+    // const fetchBookedTimes = async (selectedDate) => {
+    //     try {
+    //         const response = await axios.get(`/booked-times/${selectedDate}`);
 
-            return response.data.appointmentTimes || []; // Return the booked times
-            // setBookedTimes(response.data.appointmentTimes || []);
-            // console.log(response.data.appointmentTimes);
-        } catch (error) {
-            console.error('Error fetching booked times:', error);
-            return [];
-        }
-    };
+    //         return response.data.appointmentTimes || []; // Return the booked times
+    //         // setBookedTimes(response.data.appointmentTimes || []);
+    //         // console.log(response.data.appointmentTimes);
+    //     } catch (error) {
+    //         console.error('Error fetching booked times:', error);
+    //         return [];
+    //     }
+    // };
 
     useEffect(() => {
         axios
@@ -151,43 +148,56 @@ export default function CreateAppointment() {
     
     
     // **Generate available time slots based on business hours and step**
-    const generateAvailableTimes = (openingTime, closingTime, step,bookedTimes) => {
-        const times = [];
-        const [openHour, openMinute] = openingTime.split(':');
-        const [closeHour, closeMinute] = closingTime.split(':');
+    // const generateAvailableTimes = (openingTime, closingTime, step,bookedTimes) => {
+    //     const times = [];
+    //     const [openHour, openMinute] = openingTime.split(':');
+    //     const [closeHour, closeMinute] = closingTime.split(':');
 
-        let currentTime = new Date();
-        currentTime.setHours(openHour, openMinute);
+    //     let currentTime = new Date();
+    //     currentTime.setHours(openHour, openMinute);
 
-        const endTime = new Date();
-        endTime.setHours(closeHour, closeMinute);
+    //     const endTime = new Date();
+    //     endTime.setHours(closeHour, closeMinute);
 
-        // Create time slots based on step interval
-        while (currentTime < endTime) {
-            const timeString = currentTime.toTimeString().slice(0, 5); // Format as HH:mm
+    //     // Create time slots based on step interval
+    //     while (currentTime < endTime) {
+    //         const timeString = currentTime.toTimeString().slice(0, 5); // Format as HH:mm
 
     
-            // Modify bookedTimes to include only HH:MM
-            const bookedTimesShortened = bookedTimes.map(time => time.slice(0, 5));
-            const isBooked = bookedTimesShortened.includes(timeString);
+    //         // Modify bookedTimes to include only HH:MM
+    //         const bookedTimesShortened = bookedTimes.map(time => time.slice(0, 5));
+    //         const isBooked = bookedTimesShortened.includes(timeString);
 
 
             
-            if (!isBooked) { // **Exclude booked times**
+    //         if (!isBooked) { // **Exclude booked times**
                 
-                times.push(timeString);
-            }
-            currentTime.setMinutes(currentTime.getMinutes() + step);
-        }
-        console.log("final times")
-        console.log(times);
-        setAvailableTimes(times); // Update available times in the state
+    //             times.push(timeString);
+    //         }
+    //         currentTime.setMinutes(currentTime.getMinutes() + step);
+    //     }
+    //     console.log("final times")
+    //     console.log(times);
+    //     setAvailableTimes(times); // Update available times in the state
         
+    // };
+    const fetchAvailableTimes = async (date) => {
+        try{
+            const response = await axios.get(`/getAvailableTimes/${date}`); 
+            console.log('Available times from backend:', response.data);
+            const timesArray = Object.values(response.data);
+            return timesArray;
+        }catch(error){
+            console.error('Error fetching available times:', error);
+            return [];
+
+        }
     };
 
     const handleDateChange = async (e) => {
         const newDate = e.target.value;
-        setData('appointmentDate', newDate);
+        setSelectedDate(newDate);
+        setData('appointmentDate',newDate);
 
 
         const dayOfWeek = new Date(newDate).toLocaleDateString('en-US', { weekday: 'long' }); 
@@ -199,63 +209,82 @@ export default function CreateAppointment() {
             return; // Exit early
         }
         
-        
-
-        // **Fetch business hours and booked times for the selected date**
-        const businessHours = await fetchBusinessHours(dayOfWeek);
-        // console.log("145");
-        // console.log(businessHours);
-        const bookedTimes = await fetchBookedTimes(newDate); // **Fetch booked times**
-      
-        if (businessHours) {
-            generateAvailableTimes(businessHours.openingTime, businessHours.closingTime, businessHours.step,bookedTimes); // **Generate times based on business hours**
-          
-        } else {
-            setAvailableTimes([]); // Reset available times if the business is closed
+        try {
+            const availableTimes = await fetchAvailableTimes(newDate); // Fetch available times from the backend
+            console.log("Available times:", availableTimes);
+            setAvailableTimes(availableTimes); // Update available times state
+        } catch (error) {
+            console.error('Error fetching available times:', error);
+            setAvailableTimes([]); // Reset times on error
         }
 
-        updateMinTime(newDate);
+        
+    
+        // Update minTime based on selected date
+        // updateMinTime(newDate);
+
+        // **Fetch business hours and booked times for the selected date**
+        // const businessHours = await fetchBusinessHours(dayOfWeek);
+        // console.log("145");
+        // console.log(businessHours);
+        // const bookedTimes = await fetchBookedTimes(newDate); // **Fetch booked times**
+      
+        // if (businessHours) {
+        //     generateAvailableTimes(businessHours.openingTime, businessHours.closingTime, businessHours.step,bookedTimes); // **Generate times based on business hours**
+          
+        // } else {
+        //     setAvailableTimes([]); // Reset available times if the business is closed
+        // }
+
+      
 
         
 
     };
 
     // **No major changes here**
-    const updateMinTime = (selectedDate) => {
-        const now = new Date();
-        const selected = new Date(selectedDate);
+    // const updateMinTime = (selectedDate) => {
+    //     const now = new Date();
+    //     const selected = new Date(selectedDate);
 
-        if (selected.toDateString() === now.toDateString()) {
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            setMinTime(`${hours}:${minutes}`);
-        } else {
-            setMinTime('00:00');
-        }
-    };
+    //     if (selected.toDateString() === now.toDateString()) {
+    //         const hours = String(now.getHours()).padStart(2, '0');
+    //         const minutes = String(now.getMinutes()).padStart(2, '0');
+    //         setMinTime(`${hours}:${minutes}`);
+    //     } else {
+    //         setMinTime('00:00');
+    //     }
+    // };
 
     const submit = async (e) => {
         e.preventDefault();
 
-       
+        console.log("Submitting the following data:", {
+            vehicle_id: data.vehicle_id,
+            description: data.description,
+            serviceType: data.serviceType,
+            appointmentDate: data.appointmentDate,
+            appointmentTime: data.appointmentTime,
+        });
+    
         try {
            
             const requestData = {
-                vehicalid: data.vehicalid,
+                vehicle_id: data.vehicle_id,
                 description: data.description,
-                serviceType: data.serviceType,
-                appointmentDate: data.appointmentDate,
-                appointmentTime: data.appointmentTime,
+                service_type: data.serviceType,
+                appointment_date: data.appointmentDate,
+                appointment_time: data.appointmentTime,
             };
         
             console.log('Request data:', requestData); // Log the data being sent
         
-            const response = await axios.post(`/appointments`, requestData);
+            const response = await axios.post(`/makeappointments`, requestData);
             console.log('Inertia Response:', response);
 
             if (response.data.status === 'success') {
                 toast.success(response.data.message); // Show success toast
-                reset('vehicalid','description', 'serviceType', 'appointmentDate', 'appointmentTime');
+                reset('vehicle_id','description', 'serviceType', 'appointmentDate', 'appointmentTime');
                 setAvailableTimes([]); // Optionally reset available times
             } else {
                 toast.error('Failed to create appointment. Please try again.'); // Handle unexpected response
@@ -377,9 +406,15 @@ export default function CreateAppointment() {
                         required
                     >
                         <option value="">Select a time</option>
-                        {availableTimes.map((time, index) => (
-                            <option key={index} value={time}>{time}</option>
-                        ))}
+                        {availableTimes.length > 0 ? (
+                            availableTimes.map((time, index) => (
+                                <option key={index} value={time}>
+                                    {time}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="" disabled>No available times</option>
+                        )}
                     </select>
                     <InputError message={errors.appointmentTime} className="mt-2" />
                 </div>

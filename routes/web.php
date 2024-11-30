@@ -181,16 +181,19 @@ require __DIR__.'/auth.php';
 Route::get('Admin/Dashboard', [HomeController::class, 'index1'])->name('Admin.AdminDashboard');
 
 // Appointments
-Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments');
+
 Route::put('/business-hours/update/{dayOfWeek}', [BusinessHourController::class, 'update'])->name('business.hours.update');
 Route::get('/booked-times/{date}', [AppointmentController::class, 'getBookedTimes'])->name('booked-times');
 Route::get('/business-hours/{dayOfWeek}', [BusinessHourController::class, 'show']);
 Route::get('/closed-days', [BusinessHourController::class, 'getClosedDays'])->name('closed-days');
 Route::get('/appointmenthandle', [AppointmentController::class, 'index'])->name('appointmenthandle');
 
+Route::get('/getAvailableTimes/{date}', [AppointmentController::class, 'getAvailableTimes'])->name('getAvailableTimes');
 Route::get('/Appointments', function () {
     return Inertia::render('Customer/Appointments'); // Ensure the casing matches
 })->name('Appointments');
+
+Route::post('/makeappointments', [AppointmentController::class, 'store'])->name('makeappointments');
 
 
 
