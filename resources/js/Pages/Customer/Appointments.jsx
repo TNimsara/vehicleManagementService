@@ -11,7 +11,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 
 
 export default function Dashboard() {
-    const [selectedForm, setSelectedForm] = useState();
+    const [selectedForm, setSelectedForm] = useState('');
 
     const handleButtonClick = (formType) => {
         setSelectedForm(formType);
@@ -24,7 +24,8 @@ export default function Dashboard() {
             case 'view':
                 return <ViewAppointmentForm />;
 
-            
+            default:
+                return null;  
         }
     };
 
@@ -38,7 +39,10 @@ export default function Dashboard() {
                 <div className="flex flex-col justify-center h-full space-y-4">
                     <PrimaryButton 
                         className="bg-blue-600 text-white p-2 rounded"
-                        onClick={() => handleButtonClick('add')}
+                        onClick={() =>{
+                            console.log('Creating appointment form clicked');
+                            handleButtonClick('add');
+                        }}
                     >
                     Create Appointments
                     </PrimaryButton>
