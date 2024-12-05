@@ -67,4 +67,27 @@ class FeedbackController extends Controller
         return response()->json($feedbacks);
 
     }
+
+    // In FeedbackController or the relevant controller
+public function updateStatus(Request $request, $feedback_id)
+{
+    // Validate the request to ensure the value is boolean
+    $request->validate([
+        'is_resolved' => 'required|boolean',  // Ensure the value is a boolean
+    ]);
+
+    // Find the feedback record
+    $feedback = Feedback::find($feedback_id);
+
+    if (!$feedback) {
+        return response()->json(['error' => 'Feedback not found'], 404);
+    }
+
+    // Update the resolved status
+    $feedback->is_resolved = $request->input('is_resolved');
+    $feedback->save();
+
+    return response()->json($feedback);  // Return the updated feedback record
+}
+
 }

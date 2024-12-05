@@ -31,7 +31,8 @@ export default function All() {
     }, []);
 
   return (
-    <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+    <div className="content-area bg-white p-8 max-w-4xl rounded-lg shadow-md" style={{ marginLeft: '0' }}>
+      <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">View Feedbacks</h1>
       <Table className="w-full">
         <TableHeader>
           <TableRow>

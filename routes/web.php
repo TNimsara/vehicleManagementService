@@ -216,7 +216,8 @@ Route::get('/feedback', [FeedbackController::class, 'viewFeedback'])->name('feed
 Route::get('/feedbacksub',function(){
     return Inertia::render('Customer/Feedback');
 })->name('feedbacksub');
-Route::post('/feedback',[FeedbackController::class, 'store'])->name('feedback.store');
+Route::post('/feedback',[FeedbackController::class, 'store'])->name('feedback.store'); 
+Route::put('/updateStatus/{feedback_id}', [FeedbackController::class, 'updateStatus'])->name('updateStatus');
 
 //reciption
 Route::get('/ReceptionDashboard', function () {

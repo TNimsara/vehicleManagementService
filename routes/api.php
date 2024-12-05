@@ -23,5 +23,6 @@ Route::get('/getAvailableTimes/{appointment_date}', [AppointmentController::clas
 Route::get('/vehicle-ids', [VehicleController::class, 'getVehiclesForUser'])->name('vehicle-ids');
 
 //view feedbacks
-Route::get('/viewAllFeedback', [FeedbackController::class, 'viewAllFeedback'])->name('viewAllFeedback');
+// Route::get('/viewAllFeedback', [FeedbackController::class, 'viewAllFeedback'])->name('viewAllFeedback');
 
+Route::put('/updateStatus/{feedback_id}', [FeedbackController::class, 'updateStatus'])->name('updateStatus');
