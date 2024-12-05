@@ -29,7 +29,7 @@ export default function Dashboard() {
       case 'suggestion':
         return <Suggestion/>;
       default:
-        return <All/>;
+        // return <All/>;
     }
   };
 
@@ -40,12 +40,12 @@ export default function Dashboard() {
       <div className="flex-1 flex justify-start p-6">
               {/* Buttons on the Left Side, aligned to the center */}
               <div className="flex flex-col justify-center h-full space-y-4">
-                  <PrimaryButton 
+                  {/* <PrimaryButton 
                       className="bg-blue-600 text-white p-2 rounded"
                       onClick={() => handleButtonClick('all')}
                   >
                   All
-                  </PrimaryButton>
+                  </PrimaryButton> */}
                   <PrimaryButton 
                       className="bg-blue-600 text-white p-2 rounded"
                       onClick={() => handleButtonClick('compliment')}

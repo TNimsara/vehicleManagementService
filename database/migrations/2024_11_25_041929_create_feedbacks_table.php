@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('feedbacks', function (Blueprint $table) {
             $table->id('feedback_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('vehicle_id')->unique();
+            $table->string('vehicle_id')->nullable();
             $table->date('feedback_date');
-            $table->date('service_date');
+            $table->date('service_date')->nullable();
             $table->integer('rating');
             $table->text('description');
             $table->boolean('is_resolved')->default(false);

@@ -46,7 +46,7 @@ export default function Compliment() {
           }
   
           // Update the filteredAppointments state to reflect the change
-          setFilteredFeedbacks((prevFeedbacks) => 
+          setFeedbacks((prevFeedbacks) => 
              prevFeedbacks.map((feedback) => 
               feedback.feedback_id === feedback_id ? { ...feedback, is_resolved: status } : feedback
               )
@@ -85,9 +85,9 @@ export default function Compliment() {
               <TableCell>{feedback.description}</TableCell>
               <TableCell>
                     <select
-                      value={feedback.is_resolved} // Bind to current status
+                       value={feedback.is_resolved ? "true" : "false"} // Bind to current status
                       onChange={async (e) => {
-                          const newStatus = e.target.value;
+                        const newStatus = e.target.value === "true";
                           await handleUpdateStatus(feedback.feedback_id, newStatus); // Call update function
                       }}
                       className="p-2 border rounded-md w-36"
