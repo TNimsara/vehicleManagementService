@@ -25,3 +25,8 @@ Route::get('/vehicle-ids', [VehicleController::class, 'getVehiclesForUser'])->na
 //view feedbacks
 Route::get('/viewAllFeedback', [FeedbackController::class, 'viewAllFeedback'])->name('viewAllFeedback');
 
+//get appooinment
+Route::get('/getAppointments', [AppointmentController::class, 'getAppointments'])->name('getAppointments');
+
+//delete appoinment
+Route::delete('/deleteAppointment/{appointmentId}', [AppointmentController::class, 'deleteAppointment'])->name('deleteAppointment');

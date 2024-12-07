@@ -237,3 +237,9 @@ Route::post('/send-mail',function(Request $request){
 
 //view feedbacks
 Route::get('/viewAllFeedback', [FeedbackController::class, 'viewAllFeedback'])->name('viewAllFeedback');
+
+//get appooinment
+Route::get('/getAppointments', [AppointmentController::class, 'getAppointments'])->name('getAppointments');
+
+//delete appoinment
+Route::delete('/deleteAppointment/{appointmentId}', [AppointmentController::class, 'deleteAppointment'])->name('deleteAppointment');

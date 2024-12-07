@@ -189,4 +189,24 @@ private function generateAvailableTimes($openingTime, $closingTime, $step)
     
         return $times;
     }
+    //get appoinments
+    public function getAppointments(Request $request)
+    {
+        $user = auth()->user();  
+        $appointments = Appointment::where('user_id', $user->id)->get();
+        // $user = $request->input('userId');
+        // $appointments = Appointment::where('user_id', $user)->get();
+        return response()->json($appointments);
+    }
+    // delete appointment
+    public function deleteAppointment($appointmentId)
+    {
+        $appointment = Appointment::find($appointmentId);
+        if ($appointment) {
+            $appointment->delete();
+            return response()->json(['message' => 'Appointment deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Appointment not found'], 404);
+        }
+    }
 }
