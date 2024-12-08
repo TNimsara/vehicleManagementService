@@ -193,6 +193,58 @@ private function generateAvailableTimes($openingTime, $closingTime, $step)
         }
     }
 
-    
+    //Appointment Handling
+    public function getAllAppointments(Request $request)
+{
+    try {
+        // Ensure the user is authenticated
+        $user = auth()->user();
+        if (!$user) {
+            // Log the authentication failure
+            \Log::error('Authentication failed: User not logged in.');
+            return response()->json(['error' => 'User is not authenticated'], 401);
+        }
+
+        // Log the user info for debugging
+        \Log::info('Fetching all appointments.');
+
+        // Fetch all appointments and order by appointment_date in ascending order
+        $appointments = Appointment::orderBy('appointment_date', 'asc')->get();
+
+        // Log the result of the database query
+        \Log::info('Appointments fetched successfully:', ['appointments_count' => $appointments->count()]);
+
+        return response()->json($appointments);
+
+    } catch (\Exception $e) {
+        // Log any exceptions that occur during the process
+        \Log::error('Error fetching appointments: ' . $e->getMessage(), ['exception' => $e]);
+
+        // Return a generic error response
+        return response()->json(['error' => 'Failed to fetch appointments'], 500);
+    }
+}
+
+public function updateStatus(Request $request, $appointment_id)
+{
+    // Validate the request to ensure the value is boolean
+    $request->validate([
+        'status' => 'required|string',  // Ensure the value is a boolean
+    ]);
+
+    // Find the feedback record
+    $appointment = Appointment::find($appointment_id);
+
+    if (!$appointment) {
+        return response()->json(['error' => 'appointment not found'], 404);
+    }
+
+    // Update the resolved status
+    $appointment->status = $request->input('status');
+    $appointment->save();
+
+    return response()->json($appointment);  // Return the updated feedback record
+}
+
 }
 

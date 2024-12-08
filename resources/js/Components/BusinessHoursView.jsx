@@ -10,7 +10,7 @@ const BusinessHoursView = () => {
   useEffect(() => {
     const fetchBusinessHours = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/business-hours/view'); // API endpoint for business hours
+        const response = await fetch(`/business-hours/view`); // API endpoint for business hours
         const data = await response.json();
         
         setBusinessHours(data);  // Set the retrieved business hours data

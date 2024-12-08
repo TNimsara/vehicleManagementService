@@ -136,6 +136,12 @@ Route::get('/MyVehicles',function(){
     return Inertia::render('Customer/MyVehicles');
 })->name('MyVehicles');
 
+Route::get('/appointmentshandle',function(){
+    return Inertia::render('Admin/appointmentshandle');
+})->name('appointmentshandle');
+
+Route::get('/getAllAppointments', [AppointmentController::class, 'getAllAppointments'])->name('getAllAppointments');
+
 //Feedback
 
 Route::get('/AddFeedback',function(){
@@ -167,12 +173,6 @@ Route::get('/service',function(){
 })->name('service');
 
 
-
-
-//Receptionist
-Route::get('/AppointmentHandle',function(){
-    return Inertia::render('Receptionist/AppointmentHandle');
-})->name('AppointmentHandle');
 
 
 require __DIR__.'/auth.php';
@@ -210,7 +210,7 @@ Route::get('/usersub',function(){
 Route::post('/user',[UserController::class, 'store'])->name('user.store');
 
 // Route::post('/appointments/{id}/finish', [AppointmentController::class, 'finish'])->name('finish');
-Route::put('/appointments/{id}', [AppointmentController::class, 'updateStatus'])->name('appointments.update');
+Route::put('/updateStatus/{appointmentId}', [AppointmentController::class, 'updateStatus'])->name('updateStatus');
 Route::get('/viewappointmentss', [AppointmentController::class, 'displayCustomerAppointments'])->name('viewappointmentss');
 // Route::post('/send-email', [EmailController::class, 'sendEmail'])->name('send-email');
 

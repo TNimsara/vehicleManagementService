@@ -7,10 +7,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
+import MessageButton from '@/Components/MessageButton';
+import Modal from '@/Components/Modal';
+import  InputLabel  from '@/Components/InputLabel';
+import  TextInput  from '@/Components/TextInput';
+import SecondaryButton from '@/Components/SecondaryButton';
 
 export default function suggestion() {
 
     const [feedbacks, setFeedbacks] = useState([]);
+    const [feedbackIdToUpdate, setFeedbackIdToUpdate] = useState(null);
+    const [sendingMessage, setSendingMessage] = useState(false); 
+    const [messageContent, setMessageContent] = useState('');
+    const [errors, setErrors] = useState({});
     
 
     useEffect(() => {
@@ -72,6 +81,7 @@ export default function suggestion() {
             <TableHead>Service Date</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Resolved Status</TableHead>
+            <TableHead>Reply</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -96,10 +106,55 @@ export default function suggestion() {
                       <option value="true">Resolved</option>
                   </select>
               </TableCell>
+              <TableCell>
+                  <MessageButton
+                    onClick={() => {
+                      setFeedbackIdToUpdate(feedback.feedback_id);
+                      setSendingMessage(true);
+                    }}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Send Message
+                  </MessageButton>
+                </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <Modal show={sendingMessage} onClose={() => setSendingMessage(false)}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSendMessage(appointmentIdToUpdate);
+          }}
+          className="p-6"
+        >
+          <h2 className="text-lg font-medium text-gray-900">Send a Reply</h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Enter your message below and click 'Send' to communicate with the customer.
+          </p>
+
+          <div className="mt-6">
+            <InputLabel htmlFor="message" value="Message" className="sr-only" />
+            <TextInput
+              id="message"
+              name="message"
+              value={messageContent}
+              onChange={(e) => setMessageContent(e.target.value)}
+              className="mt-1 block w-full"
+              placeholder="Enter your message here..."
+            />
+            {errors.message && <InputError message={errors.message} className="mt-2" />}
+          </div>
+
+          <div className="mt-6 flex justify-end">
+            <SecondaryButton onClick={() => setSendingMessage(false)}>Cancel</SecondaryButton>
+            <SecondaryButton type="submit" className="ms-3 bg-blue-500 text-white">
+              Send 
+            </SecondaryButton>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

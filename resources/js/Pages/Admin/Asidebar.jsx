@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { FaUser, FaClipboardList, FaCommentDots, FaSignOutAlt, FaClock, FaBusinessTime } from 'react-icons/fa'; 
+import { FaUser, FaClipboardList, FaCommentDots, FaSignOutAlt, FaClock, FaBusinessTime, FaCalendarAlt } from 'react-icons/fa'; 
 
 export default function Sidebar() {
     return (
@@ -27,6 +27,12 @@ export default function Sidebar() {
                         <FaCommentDots className="text-base mr-4" />
                         <span className="text-base font-medium">Feedback</span>
                     </Link>
+                </li>
+                 <li>
+                 <Link href="/appointmentshandle" className="flex items-center text-white py-3 px-5 rounded-lg hover:bg-gray-700 transition duration-300">
+                     <FaCalendarAlt className="text-base mr-4" />
+                     <span className="text-base font-medium">Appointments</span>
+                 </Link>
                 </li>
                 <li>
                     <Link href="/logout" method="post" className="flex items-center text-white py-3 px-5 rounded-lg hover:bg-gray-700 transition duration-300">
