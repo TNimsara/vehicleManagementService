@@ -114,6 +114,9 @@ Route::get('/viewFeedback',function(){
     return Inertia::render('Admin/viewFeedback');
 })->name('viewFeedback');
 
+
+
+
 //Customer
 // Route::get('/CustomerDashboard', function () {
 //     return Inertia::render('Customer/CustomerDashboard'); // Ensure the casing matches
@@ -208,6 +211,9 @@ Route::get('/usersub',function(){
     return Inertia::render('Admin/UserManagement');
 })->name('usersub');
 Route::post('/user',[UserController::class, 'store'])->name('user.store');
+
+Route::get('/getAllUsers', [UserController::class, 'getAllUsers'])->name('getAllUsers');
+Route::delete('/deleteUser/{id}', [UserController::class, 'deleteUser'])->name('deleteUser');
 
 // Route::post('/appointments/{id}/finish', [AppointmentController::class, 'finish'])->name('finish');
 Route::put('/updateStatus/{appointmentId}', [AppointmentController::class, 'updateStatus'])->name('updateStatus');
