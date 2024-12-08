@@ -55,15 +55,7 @@ class AppointmentController extends Controller
 
         $dayOfWeek = $appointment_date->dayOfWeek;
 
-        // Log::info('Received request to get available times', [
-        //     'appointment_date' => $appointment_date->toDateString(),
-        // ]);
-    
-        // Log::info('Calculated day of the week for the appointment date', [
-        //     'appointment_date' => $appointment_date->toDateString(),
-        //     'dayOfWeek' => $dayOfWeek,
-        // ]);
-
+       
         $dayOfWeekMapping = [
             0 => 'Sunday',
             1 => 'Monday',
@@ -113,39 +105,7 @@ class AppointmentController extends Controller
                 $currentTime->addMinutes($stepInterval); // Add step interval
             }
     
-            // if ($appointment_date->isToday()) {
-            //     // Get current time
-            //     $now = Carbon::now();
-                
-            //     // Log the current time
-            //     Log::info('Current time retrieved', [
-            //         'current_time' => $now->toDateTimeString(),
-            //     ]);
-                
-            //     // Restrict available times to those that are at least 5 hours ahead of the current time
-            //     $availableTimes = array_filter($availableTimes, function ($time) use ($now) {
-            //         $timeCarbon = Carbon::createFromFormat('H:i', $time);
-            
-            //         // Log the comparison between the current time and the available time
-            //         Log::info('Comparing available time', [
-            //             'available_time' => $time,
-            //             'current_time' => $now->toDateTimeString(),
-            //             'time_to_compare' => $timeCarbon->toDateTimeString(),
-            //             'is_greater_than_5_hours' => $timeCarbon->greaterThanOrEqualTo($now->addHours(5)),
-            //         ]);
-            
-                //     return $timeCarbon->greaterThanOrEqualTo($now->addHours(5));
-                // });
-            
-                // Log the available times after filtering
-            //     Log::info('Available times after filtering based on 5-hour rule', [
-            //         'available_times' => $availableTimes,
-            //     ]);
-            // }
-            
-            // Log::info('Generated available times', [
-            //     'availableTimes' => $availableTimes,
-            // ]);
+           
     
             $bookedTimes = Appointment::whereDate('appointment_date', $appointment_date->toDateString())
                 ->pluck('appointment_time')
@@ -189,4 +149,50 @@ private function generateAvailableTimes($openingTime, $closingTime, $step)
     
         return $times;
     }
+    //get appoinments
+    public function getAppointments(Request $request)
+{
+    try {
+        // Ensure the user is authenticated
+        $user = auth()->user();
+        if (!$user) {
+            // Log the authentication failure
+            \Log::error('Authentication failed: User not logged in.');
+            return response()->json(['error' => 'User is not authenticated'], 401);
+        }
+
+        // Log the user info for debugging
+        \Log::info('Fetching appointments for user:', ['user_id' => $user->id]);
+
+        // Fetch appointments for the authenticated user
+        $appointments = Appointment::where('user_id', $user->id)->get();
+
+        // Log the result of the database query
+        \Log::info('Appointments fetched successfully:', ['appointments_count' => $appointments->count()]);
+
+        return response()->json($appointments);
+
+    } catch (\Exception $e) {
+        // Log any exceptions that occur during the process
+        \Log::error('Error fetching appointments: ' . $e->getMessage(), ['exception' => $e]);
+
+        // Return a generic error response
+        return response()->json(['error' => 'Failed to fetch appointments'], 500);
+    }
 }
+
+    // delete appointment
+    public function deleteAppointment($appointmentId)
+    {
+        $appointment = Appointment::find($appointmentId);
+        if ($appointment) {
+            $appointment->delete();
+            return response()->json(['message' => 'Appointment deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Appointment not found'], 404);
+        }
+    }
+
+    
+}
+

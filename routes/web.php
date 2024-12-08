@@ -194,6 +194,12 @@ Route::get('/Appointments', function () {
 })->name('Appointments');
 
 Route::post('/makeappointments', [AppointmentController::class, 'store'])->name('makeappointments');
+//get appooinment
+Route::get('/getAppointments', [AppointmentController::class, 'getAppointments'])->name('getAppointments');
+
+//delete appoinment
+Route::delete('/deleteAppointment/{appointmentId}', [AppointmentController::class, 'deleteAppointment'])->name('deleteAppointment');
+
 
 
 
